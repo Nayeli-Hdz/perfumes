@@ -100,5 +100,58 @@ class ProveedoresController extends Controller
             return redirect('ReporteProveedores');
 
 	}
+    public function ReporteProveedores(){
+
+        //     $consulta= \DB::select("SELECT *
+        //     FROM proveedores");
+        // 	//return $consulta;
+        // return view ('ReporteProveedores')
+        //     ->with('consulta',$consulta);
+    
+        $consulta=proveedores::join('marcas','proveedores.id_marca','=','marcas.id_marca')
+        ->select('proveedores.id_proveedores','proveedores.nombre',
+        'proveedores.email','proveedores.telefono','proveedores.codigo','marcas.nombre as marcas',
+        'proveedores.activo','proveedores.deleted_at')
+        ->orderby('proveedores.nombre')
+        ->get();
+    
+        return view ('ReporteProveedores')
+            ->with('consulta',$consulta);
+    
+         }
+    
+         public function DesactivarProveedores($id)
+        { 
+            //maestros::find($idm)->delete();
+            $proveedores= \DB:: UPDATE("update proveedores 
+            set activo = 'No' where id_proveedores= $id");
+    
+            // $proveedores = proveedores::find($id);
+            // $proveedores->delete();
+    
+                return redirect('ReporteProveedores');
+                Session::flash('mensaje',"El usuario a sido desactivado");
+                return redirect('reporteusuarios');
+        }
+        public function RestaurarProveedores($id)
+        {
+    
+            $proveedores= \DB:: UPDATE("update proveedores
+            set activo = 'Si' where id_proveedores= $id");
+            
+                return redirect('ReporteProveedores');	
+                Session::flash('mensaje',"El usuario a sido restaurado");
+                return redirect('reporteusuarios');	
+                
+        }
+        public function EliminarProveedores($id)
+        { 
+            $consulta = proveedores::withTrashed()->find($id)->forceDelete();
+    
+    
+                return redirect('ReporteProveedores');
+                Session::flash('mensaje',"El usuario a sido eliminado permanentemente");
+                return redirect('reporteusuarios');
+        }
 
 }
