@@ -62,4 +62,44 @@ class MarcasController extends Controller
         //return $request; 
 
      }
+     public function ModificarMarca($id)
+     {
+ 
+        $consulta = marcas::findOrFail($id);
+		return view('EditarMarca', compact('consulta'));
+ 
+     }
+     
+     public function EditarMarca(Request $request, $id)
+     {
+        $this->validate($request,[
+            'id_marca'=>'required|integer',
+            'nombre'=>'required',
+            'img'=>'image|mimes:gif,jpeg,jpg,png'
+        ]);
+        
+        $file=$request->file('img');
+        if($file<>"")
+        {
+        $img =$file->getClientOriginalName();
+        $img2 = $request->id_marca.$img;
+        \Storage::disk('local')->put($img2, \File::get($file));
+        }
+        
+        $marcas = marcas::withTrashed()->find($request->id);
+            $marcas->id_marca=$request->id_marca;
+        	$marcas->nombre=$request->nombre;
+            if($file<>"")
+            {
+            $marcas->img=$img2;
+            }
+        	$marcas->save();
+ 
+        // marcas::where('id_marca', $id)->update($validacion);
+ 
+         Session::flash('mensaje',"La marca $request->nombre ha sido modificada correctamente");
+            return redirect('ReporteMarcas');	
+ 
+     }
+
 }
