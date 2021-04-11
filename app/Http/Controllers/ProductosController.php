@@ -102,4 +102,95 @@ class ProductosController extends Controller
         //echo"Datos guardados";
 
      }
+     public function ModificarProductos($id)
+     {
+ 
+ 
+         $consulta = productos::where('id_productos','=',$id)
+                    ->get();
+         $mar = marcas::where('id_marca','=',$consulta[0]->id_marca)
+                       ->get();
+         $nommar =$mar[0]->nombre;
+         $marcas = marcas::where('id_marca','!=',$consulta[0]->id_marca)
+                      ->get();
+        $prov = proveedores::where('id_proveedores','=',$consulta[0]->id_proveedores)
+                      ->get();
+        $nomprov =$prov[0]->nombre;
+        $proveedores = proveedores::where('id_proveedores','!=',$consulta[0]->id_proveedores)
+                     ->get();
+        $cat = categorias::where('id_categoria','=',$consulta[0]->id_categoria)
+                     ->get();
+        $nomcat =$cat[0]->nombre;
+        $categorias = categorias::where('id_categoria','!=',$consulta[0]->id_categoria)
+                    ->get();
+        $tip = tipos::where('id_tipo','=',$consulta[0]->id_tipo)
+                    ->get();
+        $nomtip =$tip[0]->nombre;
+        $tipos = tipos::where('id_tipo','!=',$consulta[0]->id_tipo)
+                   ->get();
+         return view('EditarProductos')
+         ->with('consulta',$consulta[0])
+         ->with('marcas',$marcas)
+         ->with('id_marca',$consulta[0]->id_marca)
+         ->with('nommar',$nommar)
+         ->with('proveedores',$proveedores)
+         ->with('id_proveedores',$consulta[0]->id_proveedores)
+         ->with('nomprov',$nomprov)
+         ->with('categorias',$categorias)
+         ->with('id_categoria',$consulta[0]->id_categoria)
+         ->with('nomcat',$nomcat)
+         ->with('tipos',$tipos)
+         ->with('id_tipo',$consulta[0]->id_tipo)
+         ->with('nomtip',$nomtip);
+ 
+     }
+     public function EditarProductos(Request $request, $id)
+     {
+        $this->validate($request,[
+            'id_productos'=>'required|integer',
+            'nombre'=>'required', 
+            'id_marca'=>'required',
+            'contenido'=>['regex:/^[0-9, ,a-z]*$/'],
+            'precio'=>'required|numeric',
+            'id_categoria'=>'required',
+            'codigo'=>['regex:/^[A-Z]{10}$/'],
+            'existencia'=>'numeric|regex:/^[0-9]*$/',
+            'id_proveedores'=>'required',
+            'id_tipo'=>'required',
+            'descripcion'=>'required',
+            'img'=>'image|mimes:gif,jpeg,jpg,png'
+        ]);
+
+        $file=$request->file('img');
+        if($file<>"")
+        {
+        $img =$file->getClientOriginalName();
+        $img2 = $request->id_marca.$img;
+        \Storage::disk('local')->put($img2, \File::get($file));
+        }
+
+        $productos = productos::withTrashed()->find($request->id);
+            $productos->id_productos=$request->id_productos;
+            $productos->nombre=$request->nombre;
+        	$productos->id_marca=$request->id_marca;
+			$productos->contenido=$request->contenido;
+            $productos->precio=$request->precio;
+            $productos->id_categoria=$request->id_categoria;
+            $productos->codigo=$request->codigo;
+            $productos->existencia=$request->existencia;
+            $productos->id_proveedores=$request->id_proveedores;
+            $productos->id_tipo=$request->id_tipo;
+            $productos->descripcion=$request->descripcion;
+            if($file<>"")
+            {
+            $productos->img=$img2;
+            }
+        	$productos->save();
+ 
+        // productos::where('id_productos', $id)->update($validacion);
+ 
+        Session::flash('mensaje',"El producto $request->nombre ha sido modificado correctamente");
+        return redirect('ReporteProductos');	
+ 
+     }
 }
