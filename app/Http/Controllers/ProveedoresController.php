@@ -63,4 +63,42 @@ class ProveedoresController extends Controller
             return redirect('ReporteProveedores');
 
      }
+     public function ModificarProveedores($id)
+    {
+
+
+		$consulta = proveedores::where('id_proveedores','=',$id)
+		           ->get();
+	    $mar = marcas::where('id_marca','=',$consulta[0]->id_marca)
+		              ->get();
+		$nommar =$mar[0]->nombre;
+		$marcas = marcas::where('id_marca','!=',$consulta[0]->id_marca)
+		             ->get();
+		return view('EditarProveedores')
+		->with('consulta',$consulta[0])
+		->with('marcas',$marcas)
+		->with('id_marca',$consulta[0]->id_marca)
+		->with('nommar',$nommar);
+
+    }
+
+    public function EditarProveedores(Request $request, $id)
+	{
+		$validacion = $request->validate([
+            'id_proveedores'=>'required', 
+            'nombre'=>'required|alpha', 
+            'email'=>'required|email',
+            'telefono'=>['regex:/^[0-9]{10}$/'],
+            'id_marca'=>'required',
+            'codigo'=>'regex:/^[A-Z]{10}$/',
+            
+		]);
+
+		proveedores::where('id_proveedores', $id)->update($validacion);
+
+		Session::flash('mensaje',"El proveedor $request->nombre ha sido modificado correctamente");
+            return redirect('ReporteProveedores');
+
+	}
+
 }
