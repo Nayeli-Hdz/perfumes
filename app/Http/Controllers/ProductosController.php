@@ -193,4 +193,59 @@ class ProductosController extends Controller
         return redirect('ReporteProductos');	
  
      }
+     public function ReporteProductos(){
+
+        // $consulta= \DB::select("SELECT *
+        // FROM productos");
+		// //return $consulta;
+	    // return view ('ReporteProductos')
+        // ->with('consulta',$consulta);
+
+        $consulta=productos::join('marcas','productos.id_marca','=','marcas.id_marca')
+        ->join('proveedores','productos.id_proveedores','=','proveedores.id_proveedores')
+        ->join('categorias','productos.id_categoria','=','categorias.id_categoria')
+        ->join('tipos','productos.id_tipo','=','tipos.id_tipo')
+        ->select('productos.nombre','productos.id_productos','marcas.nombre as marcas','productos.contenido','productos.precio'
+        ,'productos.codigo','productos.existencia','proveedores.nombre as proveedores','productos.existencia','productos.activo',
+        'categorias.nombre as categorias','tipos.nombre as tipos','productos.img')
+        ->orderby('productos.nombre')
+        ->get();
+          return view ('ReporteProductos')
+        ->with('consulta',$consulta);
+
+
+     }
+     public function DesactivarProductos($id)
+     {
+          
+         //maestros::find($idm)->delete();
+         $productos= \DB:: UPDATE("update productos 
+         set activo = 'No' where id_productos= $id");
+ 
+         return redirect('ReporteProductos');
+         Session::flash('mensaje',"El producto a sido desactivado");
+         return redirect('reporteusuarios');
+         
+         
+     }
+     public function RestaurarProductos($id)
+     {
+ 
+         $productos= \DB:: UPDATE("update productos
+         set activo = 'Si' where id_productos= $id");
+         
+         return redirect('ReporteProductos');
+         Session::flash('mensaje',"El usuario a sido restaurado");
+         return redirect('reporteusuarios');		
+             
+     }
+     public function EliminarProductos($id)
+     { 
+         $consulta = productos::withTrashed()->find($id)->forceDelete();
+ 
+ 
+             return redirect('ReporteProductos');
+             Session::flash('mensaje',"El usuario a sido eliminado permanentemente");
+             return redirect('reporteusuarios');
+     }
 }
