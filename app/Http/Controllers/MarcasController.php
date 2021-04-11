@@ -69,7 +69,7 @@ class MarcasController extends Controller
 		return view('EditarMarca', compact('consulta'));
  
      }
-     
+
      public function EditarMarca(Request $request, $id)
      {
         $this->validate($request,[
@@ -101,5 +101,52 @@ class MarcasController extends Controller
             return redirect('ReporteMarcas');	
  
      }
+     public function ReporteMarcas(){
+
+        $consulta= \DB::select("SELECT *
+        FROM marcas");
+		//return $consulta;
+	return view ('ReporteMarcas')
+        ->with('consulta',$consulta);
+
+     }
+
+     public function DesactivarMarca($id)
+	{
+		 
+		//maestros::find($idm)->delete();
+		$marcas= \DB:: UPDATE("update marcas 
+		set activo = 'No' where id_marca= $id");
+
+		
+            return redirect('ReporteMarcas');
+
+            Session::flash('mensaje',"La marca a sido desactivado");
+            return redirect('reporteusuarios');
+		
+		
+	}
+	public function RestaurarMarca($id)
+	{
+
+		$marcas= \DB:: UPDATE("update marcas
+		set activo = 'Si' where id_marca= $id");
+		
+            return redirect('ReporteMarcas');	
+
+            Session::flash('mensaje',"La marca a sido restaurado");
+            return redirect('reporteusuarios');	
+			
+	}
+    public function EliminarMarca($id)
+	{ 
+		$consulta = marcas::withTrashed()->find($id)->forceDelete();
+
+
+            return redirect('ReporteMarcas');
+
+            Session::flash('mensaje',"La marca a sido eliminado permanentemente");
+            return redirect('reporteusuarios');
+	}
 
 }
