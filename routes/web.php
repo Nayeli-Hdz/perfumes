@@ -31,19 +31,15 @@ Route::post('guardarusuario', [UsuariosController::class, 'guardarusuario'])->na
 Route::get('reporteusuarios', [UsuariosController::class, 'reporteusuarios'])->name ('reporteusuarios');
 
 //este recibe un parametro que es la id del empleado que se va a desactivar
-Route::get('desactivausuario/{id_usuario}',[UsuariosController::class, 'desactivausuario'])
-->name('desactivausuario');
+Route::get('desactivausuario/{id_usuario}',[UsuariosController::class, 'desactivausuario'])->name('desactivausuario');
 
 //Este recibe un parametro que es la id del empleado para que se active el empleado
-Route::get('activarusuario/{id_usuario}',[UsuariosController::class, 'activarusuario'])
-->name('activarusuario');
+Route::get('activarusuario/{id_usuario}',[UsuariosController::class, 'activarusuario'])->name('activarusuario');
 
 //Este recibe un parametro que es la id del empleado para que se borre el empleado
-Route::get('borrausuario/{id_usuario}',[UsuariosController::class, 'borrausuario'])
-->name('borrausuario');
+Route::get('borrausuario/{id_usuario}',[UsuariosController::class, 'borrausuario'])->name('borrausuario');
 
 //Este recibe un parametro que es la id del empleado para que se pueda modificar el empleado
-Route::get('modificausuario/{id_usuario}',[UsuariosController::class, 'modificausuario'])
-->name('modificausuario');
+Route::get('modificausuario/{id_usuario}',[UsuariosController::class, 'modificausuario'])->name('modificausuario');
 
 Route::post('guardacambios', [UsuariosController::class, 'guardacambios'])->name ('guardacambios');
