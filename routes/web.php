@@ -20,3 +20,12 @@ Route::get('/', function () {
 Route::get('Principal', function () {
     return view('Principal');
 });
+
+//--------------USUARIOS
+Route::get('Usuarios', [UsuariosController::class, 'Usuarios'])->name ('Usuarios');
+
+Route::post('Mensaje', [UsuariosController::class, 'Mensaje'])->name ('Mensaje');
+
+Route::post('guardarusuario', [UsuariosController::class, 'guardarusuario'])->name ('guardarusuario');
+
+Route::get('reporteusuarios', [UsuariosController::class, 'reporteusuarios'])->name ('reporteusuarios');
